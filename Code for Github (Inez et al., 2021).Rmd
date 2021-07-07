@@ -231,7 +231,7 @@ BTBE_ATS=function(ATS,par0,par1,Dist){
 ```
 
 
-## 3. Examples of BTBE chart under GBE distribution
+## 2.1. Examples of BTBE chart under GBE distribution
 ```{r}
 ### When delta is equal to 1
 ATS=200
@@ -246,7 +246,7 @@ par1=c(5,5,0.5)
 BTBE_ATS(ATS,par0,par1,Dist="GBE")
 ```
 
-## 4. Example of BTBE chart under MOBE distribution
+## 2.2. Example of BTBE chart under MOBE distribution
 ```{r}
 ATS=200
 par0=c(1,5,5,0)
@@ -254,7 +254,7 @@ par1=c(1,5,5,0)
 BTBE_ATS(ATS,par0,par1,Dist="MOBE")
 ```
 
-## 5. Example of BTBE chart under MOBW distribution
+## 2.3. Example of BTBE chart under MOBW distribution
 ```{r}
 ATS=200
 par0=c(2,5,5,0)
