@@ -1,7 +1,7 @@
 ---
 title: "Codes: A Real Time Monitoring Approach for Bivariate Event Data"
 author: "Inez Maria Zwetsloot, Tahir Mahmood, Funmilola Mary Taiwo and Zezhong Wang"
-date: "22 June 2021"
+date: "12 July 2021"
 output: pdf_document
 bibliography: references.bib 
 editor_options: 
@@ -50,11 +50,11 @@ rgbe = function(n, par){
 }
 ```
 
-### 1.1.2. Function for $C(x,y)$
+### 1.1.2. Function for $C(x_1,x_2)$
 ```{r fC}
-fC = function(x,y,par){
+fC = function(x1,x2,par){
   t1 = par[1];t2 = par[2];del = par[3]
-  C = (x/t1)^(1/del) + (y/t2)^(1/del)
+  C = (x1/t1)^(1/del) + (x2/t2)^(1/del)
   return(C)  
 }
 ```
