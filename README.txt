@@ -9,7 +9,7 @@ For the practioniers, examples to estimate TS for BTBE chart under bivariate lif
 
 References
 Zwetsloot, Inez Maria, Tahir Mahmood, Funmilola Mary Taiwo, and Wang Zezhong. 2021. “A Real Time
-Monitoring Approach for Bivariate Event Data.” Submitted for Publication.
+Monitoring Approach for Bivariate Event Data." Accessed through https://arxiv.org/abs/2107.11971.
 
 
 
