@@ -3,14 +3,13 @@ for BTBE chart. The functions to obtained ATS for BTBE chart under Gumbel's Biva
 Further, the functions for the ATS value of BTBE chart under Marshall Olkin Bivariate Exponential (MOBE) and Marshal Olkin Bivariate Weibull (MOBW) distributions
 are given in Section 1.3 and 1.4, respectively.
 
-For the practioniers, examples to estimate TS for BTBE chart under bivariate lifetime distributions are provided in Section 2. The example for ATS of BTBE chart under GBE distribution 
-is given in section 2.1 while example for ATS of BTBE chart under MOBE and MOBW distributions are provided in Section 2.2 and 2.3, respectively.  
+For the practioniers, examples to estimate TS for BTBE chart under bivariate lifetime distributions are provided in Section 2. The example for ATS of BTBE chart under GBE distribution is given in section 2.1 while example for ATS of BTBE chart under MOBE and MOBW distributions are provided in Section 2.2 and 2.3, respectively.  
 
 
 
 References
-Zwetsloot, Inez Maria, Tahir Mahmood, Funmilola Mary Taiwo, and Wang Zezhong. 2021. ìA Real Time
-Monitoring Approach for Bivariate Event Data.î Submitted for Publication.
+Zwetsloot, Inez Maria, Tahir Mahmood, Funmilola Mary Taiwo, and Wang Zezhong. 2021. ‚ÄúA Real Time
+Monitoring Approach for Bivariate Event Data.‚Äù Submitted for Publication.
 
 
 
