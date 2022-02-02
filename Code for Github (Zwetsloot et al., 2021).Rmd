@@ -66,23 +66,26 @@ CL.Z =  function(par,ATS){
   t1=par[1];t2=par[2];del=par[3]
   C11=fC(1,1,par)
   ETBE0=0.5*(t1+t2-(1/(C11^del)))
-  alpha = ETBE0/ATS
+  alpha = ETBE0/(2*ATS)
+  lcl= -(1/(C11^del))*log(1-alpha)
   ucl= -(1/(C11^del))*log(alpha)
-  return(ucl)
+  return(c(lcl,ucl))
 }
 
 CL.M =  function(par,ATS,vX){
   t1=par[1];t2=par[2];del=par[3]
   C11=fC(1,1,par)
   ETBE0=0.5*(t1+t2-(C11^(-del)))
-  alpha = ETBE0/ATS
+  alpha = ETBE0/(2*ATS)
   z = min(vX)
   v = as.numeric(vX[1]<vX[2])
 
   if (del==1){
     if (v==1){
+       lcl= z - t2*log(1-alpha)
        ucl = z - t2*log(alpha)
     } else if (v==0){
+       lcl= z - t1*log(1-alpha)
        ucl = z - t1*log(alpha)
     }
   } else if (del<1){
@@ -91,16 +94,18 @@ CL.M =  function(par,ATS,vX){
         G2 = (del/(1-del))*(fC(z,z,par)^del)*(alpha*exp(-(fC(z,z,par)^del)))^(-del/(1-del))
         WG1 = lambertW(G1,tolerance = 1e-10,maxit=50)
         WG2 = lambertW(G2,tolerance = 1e-10,maxit=50)
+        lcl = t2*(((1-del)/del*WG1)^(1/del)-(z/t1)^(1/del))^del  
         ucl = ((t2*(1-del)/del*WG2)^(1/del)-(z*t2/t1)^(1/del))^del       
     } else if (v==0){
         G1 = (del/(1-del))*(fC(z,z,par)^del)*((1-alpha)*exp(-(fC(z,z,par)^del)))^(-del/(1-del))
         G2 = (del/(1-del))*(fC(z,z,par)^del)*(alpha*exp(-(fC(z,z,par)^del)))^(-del/(1-del))
         WG1 = lambertW(G1,tolerance = 1e-10,maxit=50)
         WG2 = lambertW(G2,tolerance = 1e-10,maxit=50)
+        lcl = t1*(((1-del)/del*WG1)^(1/del)-(z/t2)^(1/del))^del 
         ucl = ((t1*(1-del)/del*WG2)^(1/del)-(z*t1/t2)^(1/del))^del    
     } 
   }
-  return(ucl)
+  return(c(lcl,ucl))
 }
 ```
 
@@ -112,23 +117,26 @@ GBE_ATS = function(ATS,par0,par1){
   R=10000;vTS=rep(0,R)
   for (i in 1:R){
     #run chart as long as there is no signal
-    vSignal = c(FALSE,FALSE)
+    vSignal = c(FALSE,FALSE,FALSE,FALSE)
     while(all(!vSignal)){ 
      vX = rgbe(n=1,par1) #generate data from MOBW
         Z = min(vX);M = max(vX)
 
-
         #update signal vector for first passage time
-       UCL.z=CL.Z(par0,ATS) #ucl for Z
-       UCL.m=CL.M(par0,ATS,vX) #lcl for M
-        vSignal[1] = Z > UCL.z
-        vSignal[2] = M > UCL.m
+       LCL.z=CL.Z(par0,ATS)[1] #lcl for Z
+       UCL.z=CL.Z(par0,ATS)[2] #ucl for Z
+       LCL.m=CL.M(par0,ATS,vX)[1] #lcl for M
+       UCL.m=CL.M(par0,ATS,vX)[2] #ucl for M
+        vSignal[1] = Z < LCL.z
+        vSignal[2] = Z > UCL.z
+        vSignal[3] = M < LCL.m
+        vSignal[4] = M > UCL.m
         
         if(all(vSignal == FALSE)){
           vTS[i] =vTS[i]+M
-      } else if(vSignal[1] == TRUE){
+      } else if(any(vSignal[1:2] == TRUE)){
           vTS[i] =vTS[i]+Z
-        } else if(vSignal[2] == TRUE){
+        } else if(any(vSignal[3:4] == TRUE)){
           vTS[i] =vTS[i]+M
         }
     }
@@ -144,17 +152,17 @@ GBE_ATS1=function(ATS,par0,par1){
   t1=par0[1];t2=par0[2]
   C11=fC(1,1,par0)
   ETBE0=0.5*(t1+t2-C11^(-1))
-  alpha = ETBE0/ATS
+  alpha = ETBE0/(ATS/2)
   
   t1_=par1[1];t2_=par1[2]
   C11_=fC(1,1,par1)
   ETBE1=0.5*(t1_+t2_-C11_^(-1))
   
-  num = 2- alpha^(C11_/C11)
-  Pns1 = 1-alpha^(C11_/C11)
+  num = 2- (alpha/2)^(C11_/C11)
+  Pns1 = 1-(alpha/2)^(C11_/C11)
   P1_=1/(t1_*C11_)
   P2_=1/(t2_*C11_)
-  denum = 1 - Pns1*(P1_*(1-alpha^(t2/t2_))+P2_*(1-alpha^(t1/t1_)))
+  denum = 1 - Pns1*(P1_*(1-(alpha/2)^(t2/t2_))+P2_*(1-(alpha/2)^(t1/t1_)))
   ats1=num/denum*ETBE1
 return(ats1)
 }
@@ -172,8 +180,17 @@ l_1= par1[2];l_2=par1[3];l_12=par1[1]
 l_=l_1+l_2+l_12
 ETBE1 = 0.5*(l_2/l_^2+l_2/l_/(l_1+l_12)+l_1/l_^2+l_1/l_/(l_2+l_12))+l_12/l_^2
 
-Noevent = (l_1+l_2)/l_*(2-alpha^(l_/l))+l_12/l_
-Psignal = alpha^(l_/l)+((l_1/l_)*alpha^((l_2+l_12)/(l2+l12))+(l_2/l_)*alpha^((l_1+l_12)/(l1+l12)))*(1-alpha^(l_/l))
+alpha_L=1-(1-alpha/2)^(l_/l)
+alpha_U=(alpha/2)^(l_/l)
+alpha_=alpha_L+alpha_U
+Noevent = 1+((l_1+l_2)/l_*(1-alpha_))
+
+pw1=(l_1+l_12)/(l1+l12)
+pw2=(l_2+l_12)/(l2+l12)
+Psignal = alpha_+(1-alpha_)*(((l_1/l_)*(1-(1-alpha/2)^pw2+(alpha/2)^pw2))+((l_2/l_)*(1-(1-alpha/2)^pw1+(alpha/2)^pw1)))
+
+#Noevent = (l_1+l_2)/l_*(2-alpha^(l_/l))+l_12/l_
+#Psignal = alpha^(l_/l)+((l_1/l_)*alpha^((l_2+l_12)/(l2+l12))+(l_2/l_)*alpha^((l_1+l_12)/(l1+l12)))*(1-alpha^(l_/l))
 ARL1 = Noevent/Psignal 
 ATS1 <- ARL1*ETBE1
 return(ATS1)
