@@ -152,18 +152,22 @@ GBE_ATS1=function(ATS,par0,par1){
   t1=par0[1];t2=par0[2]
   C11=fC(1,1,par0)
   ETBE0=0.5*(t1+t2-C11^(-1))
-  alpha = ETBE0/(ATS/2)
+  alpha = ETBE0/ATS
   
   t1_=par1[1];t2_=par1[2]
   C11_=fC(1,1,par1)
   ETBE1=0.5*(t1_+t2_-C11_^(-1))
   
-  num = 2- (alpha/2)^(C11_/C11)
-  Pns1 = 1-(alpha/2)^(C11_/C11)
-  P1_=1/(t1_*C11_)
-  P2_=1/(t2_*C11_)
-  denum = 1 - Pns1*(P1_*(1-(alpha/2)^(t2/t2_))+P2_*(1-(alpha/2)^(t1/t1_)))
-  ats1=num/denum*ETBE1
+  aa1=(1-(alpha/2))
+  aa2=(alpha/2)
+  ca1=C11_/C11
+  
+  num = (1-(aa1^ca1)+(aa2^ca1))
+  denum1=(aa2^ca1)-(aa1^ca1)
+  denum2=(1/(t1_*C11_))*((aa1^(t2/t2_))-(aa2^(t2/t2_))-1)
+  denum3=(1/(t2_*C11_))*((aa1^(t1/t1_))-(aa2^(t1/t1_))-1)
+  denum=num+denum1*(denum2+denum3)
+  ats1=((2-num)/denum)*ETBE1
 return(ats1)
 }
 ```
